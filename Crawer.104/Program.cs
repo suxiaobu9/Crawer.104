@@ -20,7 +20,7 @@ IConfiguration config = new ConfigurationBuilder()
 
 Log.Logger = new LoggerConfiguration()
     .MinimumLevel.Information()
-    .WriteTo.File($"E:\\OneDrive\\Logs\\{now:yyyyMMdd}_104crawer_log.txt")
+    .WriteTo.File(string.Format(config.GetSection("SerilogPath").Value, now.ToString("yyyyMMdd")))
     .CreateLogger();
 
 serviceCollection.AddDbContext<Crawer104Context>(options => options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
