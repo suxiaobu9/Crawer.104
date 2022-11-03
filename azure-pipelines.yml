@@ -20,7 +20,7 @@ steps:
     script: |
       ls
       dotnet clean --configuration $(buildConfiguration)
-      dotnet publish --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) /p:EnvironmentName=$(EnvironmentName)
+      dotnet publish './Crawer.104/Crawer.104.csproj' --configuration $(buildConfiguration) --output $(Build.ArtifactStagingDirectory) /p:EnvironmentName=$(EnvironmentName)
       
 - task: PublishBuildArtifacts@1
   inputs:
