@@ -12,22 +12,10 @@ namespace Crawer._104.Models.EF;
 
 public partial class Crawer104Context
 {
-    public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-    {
-        SetUpdateDate();
-        return base.SaveChangesAsync(cancellationToken);
-    }
-
     public override Task<int> SaveChangesAsync(bool acceptAllChangesOnSuccess, CancellationToken cancellationToken = default)
     {
         SetUpdateDate();
         return base.SaveChangesAsync(acceptAllChangesOnSuccess, cancellationToken);
-    }
-
-    public override int SaveChanges()
-    {
-        SetUpdateDate();
-        return base.SaveChanges();
     }
 
     public override int SaveChanges(bool acceptAllChangesOnSuccess)
@@ -45,7 +33,7 @@ public partial class Crawer104Context
 
         foreach (var item in 待變更資料)
         {
-            if (!item.Properties.Any(x => x.Metadata.Name != nameof(職缺.更新時間) && x.Metadata.Name != nameof(職缺.被刪除) && x.IsModified))
+            if (!item.Properties.Any(x => x.IsModified && (x.Metadata.Name != nameof(職缺.更新時間) || x.Metadata.Name != nameof(職缺.被刪除))))
                 continue;
 
             item.Entity.更新時間 = DateTime.UtcNow;

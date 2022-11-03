@@ -72,8 +72,7 @@ foreach (var key in searchKey)
                 if (string.IsNullOrWhiteSpace(job.custNo))
                     continue;
 
-                Log.Information($"{job.custName}");
-                Log.Information($"{job.jobName}");
+                Log.Information($"{job.custName} - {job.jobName}");
 
                 if (doneCompTable.ContainsKey(job.custNo))
                     dbCompData = doneCompTable.FirstOrDefault(x => x.Key == job.custNo).Value;
@@ -101,12 +100,14 @@ foreach (var key in searchKey)
                         dbCompData.公司網址 = compDetailUrl;
                         dbCompData.公司編號 = job.custNo;
                     }
-                    await db.SaveChangesAsync();
                     doneCompTable.Add(job.custNo, dbCompData);
                 }
 
                 if (string.IsNullOrWhiteSpace(job.jobNo) || doneJobTable.ContainsKey(job.jobNo))
+                {
+                    await db.SaveChangesAsync();
                     continue;
+                }
 
                 dbJobData = await db.職缺s.FirstOrDefaultAsync(x => x.工作編號 == job.jobNo);
 
@@ -137,7 +138,7 @@ foreach (var key in searchKey)
                         已讀 = false
                     };
 
-                    await db.職缺s.AddAsync(dbJobData);
+                    dbCompData.職缺s.Add(dbJobData);
                 }
                 else
                 {
@@ -155,9 +156,7 @@ foreach (var key in searchKey)
                     dbJobData.被刪除 = false;
                     dbJobData.已讀 = false;
                 }
-                await db.SaveChangesAsync();
                 doneJobTable.Add(job.jobNo, dbJobData);
-
 
                 if (string.IsNullOrWhiteSpace(dbJobData.詳細內容網址))
                     continue;
@@ -180,9 +179,6 @@ foreach (var key in searchKey)
                 dbCompData.福利 = jobDetail.data.welfare?.welfare;
 
                 await db.SaveChangesAsync();
-
-                Log.Information($"----------");
-
             }
 
         }
