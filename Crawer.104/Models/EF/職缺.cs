@@ -10,7 +10,7 @@ namespace Crawer._104.Models.EF
         public DateTime? 出現日期 { get; set; }
         public string? 工作地點 { get; set; }
         public string? 工作名稱 { get; set; }
-        public string? 工作編號 { get; set; }
+        public string 工作編號 { get; set; } = null!;
         public string? 詳細內容網址 { get; set; }
         public string? 年資 { get; set; }
         public string? 薪水說明 { get; set; }

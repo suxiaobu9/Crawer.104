@@ -4,7 +4,7 @@
     [出現日期]   DATETIME       NULL,
     [工作地點]   NVARCHAR (MAX) NULL,
     [工作名稱]   NVARCHAR (MAX) NULL,
-    [工作編號]   VARCHAR (50)   NULL,
+    [工作編號]   VARCHAR (50)   NOT NULL,
     [詳細內容網址] NVARCHAR (MAX) NULL,
     [年資]     NVARCHAR (10)  NULL,
     [薪水說明]   NVARCHAR (50)  NULL,
@@ -24,4 +24,11 @@
 );
 
 
+
+
+
+
+GO
+CREATE UNIQUE NONCLUSTERED INDEX [IX_職缺]
+    ON [dbo].[職缺]([工作編號] ASC);
 

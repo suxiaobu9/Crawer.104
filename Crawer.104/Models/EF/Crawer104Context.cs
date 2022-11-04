@@ -25,6 +25,9 @@ namespace Crawer._104.Models.EF
             {
                 entity.ToTable("公司");
 
+                entity.HasIndex(e => e.公司編號, "IX_公司")
+                    .IsUnique();
+
                 entity.Property(e => e.Id).HasColumnName("ID");
 
                 entity.Property(e => e.公司編號)
@@ -37,6 +40,9 @@ namespace Crawer._104.Models.EF
             modelBuilder.Entity<職缺>(entity =>
             {
                 entity.ToTable("職缺");
+
+                entity.HasIndex(e => e.工作編號, "IX_職缺")
+                    .IsUnique();
 
                 entity.Property(e => e.Id).HasColumnName("ID");
 

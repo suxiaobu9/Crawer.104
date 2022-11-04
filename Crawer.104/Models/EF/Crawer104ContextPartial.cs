@@ -33,12 +33,12 @@ public partial class Crawer104Context
 
         foreach (var item in 待變更資料)
         {
-            if (!item.Properties.Any(x => x.IsModified && (x.Metadata.Name != nameof(職缺.更新時間) || x.Metadata.Name != nameof(職缺.被刪除))))
-                continue;
+            if (item.Properties.Any(x => x.IsModified && x.Metadata.Name != nameof(職缺.更新時間) && x.Metadata.Name != nameof(職缺.被刪除)))
+            {
+                item.Entity.更新時間 = DateTime.UtcNow;
 
-            item.Entity.更新時間 = DateTime.UtcNow;
-
-            Log.Information(string.Join(Environment.NewLine, item.Properties.Where(x => x.IsModified).Select(x => x.Metadata.Name + " : " + x.OriginalValue + " -> " + x.CurrentValue)));
+                Log.Information(item.Property(nameof(職缺.Id)).CurrentValue?.ToString() + " " + string.Join(Environment.NewLine, item.Properties.Where(x => x.IsModified).Select(x => x.Metadata.Name + " : " + x.OriginalValue + " -> " + x.CurrentValue)));
+            }
         }
     }
 }
