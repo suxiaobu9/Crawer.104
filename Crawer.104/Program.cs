@@ -3,14 +3,13 @@ using Crawer._104.Models.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Net.Http.Json;
-using System.Linq;
-using System.Diagnostics;
 using Serilog;
-using Serilog.Events;
-using System;
+using System.Diagnostics;
+using System.Net.Http.Json;
+using System.Text.Encodings.Web;
+using System.Text.Json;
+using System.Text.Unicode;
 using System.Web;
-using System.Diagnostics.CodeAnalysis;
 
 var now = DateTime.UtcNow.AddHours(8);
 
@@ -26,6 +25,12 @@ Log.Logger = new LoggerConfiguration()
     .WriteTo.File(string.Format(config.GetSection("SerilogPath").Value, now.ToString("yyyyMMdd")))
     .CreateLogger();
 
+var options = new JsonSerializerOptions
+{
+    PropertyNamingPolicy = null,
+    Encoder = JavaScriptEncoder.Create(UnicodeRanges.BasicLatin, UnicodeRanges.CjkUnifiedIdeographs)
+};
+
 serviceCollection.AddDbContext<Crawer104Context>(options => options.UseSqlServer(config.GetConnectionString("DefaultConnection")));
 
 var httpClient = new HttpClient { BaseAddress = new Uri("https://www.104.com.tw") };
@@ -35,6 +40,8 @@ httpClient.DefaultRequestHeaders.Add("Referer", httpClient.BaseAddress.AbsoluteU
 var services = serviceCollection.BuildServiceProvider();
 
 var db = services.GetRequiredService<Crawer104Context>();
+
+
 
 var compNoHash = new HashSet<string>();
 var jobNoHash = new HashSet<string>();
@@ -52,7 +59,7 @@ Log.Information("Process Start !");
 sw.Start();
 
 // 取得所有條件的總頁數
-var getTotalPageTasks = await Task.WhenAll(
+var getTotalPages = await Task.WhenAll(
 searchKey.SelectMany(key =>
 {
     return jobExps.Select(jobExp =>
@@ -71,11 +78,11 @@ searchKey.SelectMany(key =>
      });
 }).ToArray());
 
-if (getTotalPageTasks == null)
+if (getTotalPages == null)
     return;
 
 // 取得所有條件的所有列表資料
-var jobTasks = getTotalPageTasks
+var jobTasks = getTotalPages
 .Where(x => x != null && x.data != null)
 .SelectMany(jobList =>
 {
@@ -150,7 +157,7 @@ foreach (var jobTask in jobTasks)
             最低薪 = job.salaryLow?.TrimStart('0'),
             最高薪 = job.salaryHigh?.TrimStart('0'),
             薪水說明 = job.salaryDesc,
-            標記 = job.tags == null ? null : string.Join(",", job.tags),
+            標記 = job.tags == null ? null : JsonSerializer.Serialize(job.tags, options: options),
             詳細內容網址 = detailLink,
             被刪除 = false,
             已讀 = false

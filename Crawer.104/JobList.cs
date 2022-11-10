@@ -138,7 +138,7 @@ public class List
     public string? applyDate { get; set; }
     public string? isSave { get; set; }
     public string? descSnippet { get; set; }
-    public string[]? tags { get; set; }
+    public object? tags { get; set; }
     public string? landmark { get; set; }
     public Link? link { get; set; }
     public string? jobsource { get; set; }
@@ -156,5 +156,38 @@ public class Link
     public string? job { get; set; }
     public string? cust { get; set; }
 }
+
+public class Tags
+{
+    public Emp? emp { get; set; }
+    public Zoneforeign? zoneForeign { get; set; }
+    public Zone? zone { get; set; }
+    public Remote? remote { get; set; }
+}
+
+public class Emp
+{
+    public string? desc { get; set; }
+    public string? param { get; set; }
+}
+
+public class Zoneforeign
+{
+    public string? desc { get; set; }
+    public int param { get; set; }
+}
+
+public class Remote
+{
+    public string? desc { get; set; }
+}
+
+public class Zone
+{
+    public string? desc { get; set; }
+    public int param { get; set; }
+}
+
+
 
 
