@@ -7,6 +7,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Crawer.104", "Crawer.104\Cr
 EndProject
 Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "Crawer.104.SSDT", "Crawer.104.SSDT\Crawer.104.SSDT.sqlproj", "{70F5E32F-49F7-4D36-8186-D6E48C85396A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Web.104.JD", "Web.104.JD\Web.104.JD.csproj", "{8FBD298C-0D26-4369-82CD-4651AA550EBE}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "JD.104.Model", "JD.104.Model\JD.104.Model.csproj", "{169853A5-3F3D-4C88-ABBF-06D9895939C4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +27,14 @@ Global
 		{70F5E32F-49F7-4D36-8186-D6E48C85396A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{70F5E32F-49F7-4D36-8186-D6E48C85396A}.Release|Any CPU.Build.0 = Release|Any CPU
 		{70F5E32F-49F7-4D36-8186-D6E48C85396A}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{8FBD298C-0D26-4369-82CD-4651AA550EBE}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8FBD298C-0D26-4369-82CD-4651AA550EBE}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8FBD298C-0D26-4369-82CD-4651AA550EBE}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8FBD298C-0D26-4369-82CD-4651AA550EBE}.Release|Any CPU.Build.0 = Release|Any CPU
+		{169853A5-3F3D-4C88-ABBF-06D9895939C4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{169853A5-3F3D-4C88-ABBF-06D9895939C4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{169853A5-3F3D-4C88-ABBF-06D9895939C4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{169853A5-3F3D-4C88-ABBF-06D9895939C4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

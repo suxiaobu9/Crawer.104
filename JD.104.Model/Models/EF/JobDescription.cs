@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace Crawer._104.Models.EF
+namespace JD._104.Model.Models.EF
 {
     public partial class JobDescription
     {

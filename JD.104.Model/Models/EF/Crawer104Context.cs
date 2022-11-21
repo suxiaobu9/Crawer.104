@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
 
-namespace Crawer._104.Models.EF
+namespace JD._104.Model.Models.EF
 {
     public partial class Crawer104Context : DbContext
     {

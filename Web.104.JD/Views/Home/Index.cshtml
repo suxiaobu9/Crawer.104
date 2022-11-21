@@ -1,0 +1,26 @@
+﻿@model JD._104.Model.Models.EF.Company[]
+
+@{
+    ViewData["Title"] = "Home Page";
+}
+
+<div class="row">
+
+    @foreach (var item in Model)
+    {
+        <div class="col-6 mt-2">
+            <div class="row">
+                <div class="col-8">
+                    @item.CompanyName
+                </div>
+                <div class="col-2">
+                    <a asp-action="JD" asp-asp-controller="Home" class="btn btn-success" asp-route-compId="@item.Id">JD</a>
+                </div>
+                <div class="col-2">
+                    @Html.ActionLink("Ignore","Ignore","Home",new{compId=item.Id},new{@class="btn btn-danger"})
+                </div>
+            </div>
+        </div>
+    }
+
+</div>

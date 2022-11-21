@@ -1,5 +1,5 @@
 ﻿using Crawer._104;
-using Crawer._104.Models.EF;
+using JD._104.Model.Models.EF;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;

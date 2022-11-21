@@ -1,0 +1,78 @@
+﻿@model JD._104.Model.Models.EF.Company
+
+@{
+    ViewData["Title"] = Model.CompanyName;
+}
+
+<div class="row">
+    <div class="col-12">
+        <div class="row">
+            <div class="col-12">
+                <a class="btn btn-primary" href="@Model.CompanyUrl" target="_blank">@Model.CompanyName</a>
+                <a asp-action="Ignore" asp-controller="Home" class="btn btn-danger" asp-route-compId="@Model.Id">Ignore</a>
+                <a asp-action="ReadAll" asp-controller="Home" class="btn btn-warning" asp-route-compId="@Model.Id">已讀</a>
+                <a asp-action="SetPro" asp-controller="Home" class="btn btn-info" asp-route-compId="@Model.Id" asp-route-prop="專案、派遣">專案、派遣</a>
+            </div>
+        </div>
+        <hr />
+        <div class="col-12">
+            <span style="white-space: pre-line">@Model.Welfare</span>
+        </div>
+        <hr />
+    </div>
+
+    @if (Model.JobDescriptions != null)
+    {
+        @foreach (var item in Model.JobDescriptions)
+        {
+            <div class="col-12">
+                @if (item.HaveRead != null && item.HaveRead.Value)
+                {
+                    <label class="bg-primary text-white">已讀</label>
+                }
+                else
+                {
+                    <a class="btn btn-warning" asp-action="ReadJD" asp-controller="Home" asp-route-compId="@Model.Id" asp-route-jdId="@item.Id">已讀</a>
+                }
+                <a class="btn btn-success" href="@item.DetailUrl" target="_blank">@item.JobName</a>
+            </div>
+
+            <div class="col-12">
+                @item.JobPlace
+            </div>
+
+            <div class="col-1">
+                @item.Seniority
+            </div>
+
+            <div class="col-3">
+                @item.WorkingHour
+            </div>
+
+            @if (!string.IsNullOrWhiteSpace(item.MinimunSalary + item.HighestSalary))
+            {
+                <div class="col-3">
+                    @item.MinimunSalary  ~  @item.HighestSalary
+                </div>
+            }
+
+            @if (item.RemoteWork != null && item.RemoteWork.Value)
+            {
+                <div class="col-3 bg-warning">
+                    遠端
+                </div>
+            }
+            <div class="col-12 bg-info">
+                <span style="white-space: pre-line">@item.WorkContent</span>
+            </div>
+
+            <hr />
+
+            <div class="col-12 bg-info">
+                <span style="white-space: pre-line">@item.Request</span>
+            </div>
+            <hr />
+        }
+    }
+
+</div>
