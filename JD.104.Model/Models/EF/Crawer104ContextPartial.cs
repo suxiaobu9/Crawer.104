@@ -31,6 +31,7 @@ public partial class Crawer104Context
                 nameof(JobDescription.UpdatedDate),
                 nameof(JobDescription.IsDeleted),
                 nameof(JobDescription.AppearDate),
+                nameof(JobDescription.HaveRead),
             };
 
             var properties = item.Properties.Where(x => x.IsModified && !ignoreProps.Contains(x.Metadata.Name)).ToArray();
@@ -39,7 +40,7 @@ public partial class Crawer104Context
                 continue;
 
             item.Entity.UpdatedDate = DateTime.UtcNow;
-
+            item.Entity.HaveRead = false;
 
             var changedInfo = item.Property(nameof(JobDescription.Id)).CurrentValue?.ToString() + " " + string.Join(Environment.NewLine, item.Properties.Where(x => x.IsModified).Select(x => x.Metadata.Name + " : " + x.OriginalValue + " -> " + x.CurrentValue));
             changedInfo += Environment.NewLine;

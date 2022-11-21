@@ -160,7 +160,6 @@ foreach (var jobTask in jobTasks)
             Tags = job.tags == null ? null : JsonSerializer.Serialize(job.tags, options: options),
             DetailUrl = detailLink,
             IsDeleted = false,
-            HaveRead = false
         });
     }
 }
@@ -244,7 +243,6 @@ foreach (var job in jobDic)
     dbJobData.Tags = job.Value.Tags;
     dbJobData.DetailUrl = job.Value.DetailUrl;
     dbJobData.IsDeleted = job.Value.IsDeleted;
-    dbJobData.HaveRead = job.Value.HaveRead;
 
 }
 

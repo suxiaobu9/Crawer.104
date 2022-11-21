@@ -23,6 +23,7 @@ public class HomeController : Controller
     {
         var companies = await db.Companies
             .AsNoTracking()
+            .Include(x => x.JobDescriptions.Where(x=>x.IsDeleted ==null || !x.IsDeleted.Value))
             .Where(x => x.Ignore == null || !x.Ignore.Value)
             .Where(x => x.JobDescriptions.Any(y => y.IsDeleted == null || !y.IsDeleted.Value))
             .OrderByDescending(x => x.JobDescriptions.Any(y => y.IsDeleted != null && !y.IsDeleted.Value && y.RemoteWork != null && y.RemoteWork.Value && y.HaveRead != null && !y.HaveRead.Value))
