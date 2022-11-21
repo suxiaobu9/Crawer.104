@@ -26,7 +26,7 @@ public partial class Crawer104Context
 
     private void SetUpdateDate()
     {
-        var 待變更資料 = this.ChangeTracker.Entries<職缺>().Where(x => x.State == EntityState.Modified).ToArray();
+        var 待變更資料 = this.ChangeTracker.Entries<JobDescription>().Where(x => x.State == EntityState.Modified).ToArray();
 
         if (待變更資料.Length == 0)
             return;
@@ -35,9 +35,9 @@ public partial class Crawer104Context
         {
             var ignoreProps = new string[]
             {
-                nameof(職缺.更新時間),
-                nameof(職缺.被刪除),
-                nameof(職缺.出現日期),
+                nameof(JobDescription.UpdatedDate),
+                nameof(JobDescription.IsDeleted),
+                nameof(JobDescription.AppearDate),
             };
 
             var properties = item.Properties.Where(x => x.IsModified && !ignoreProps.Contains(x.Metadata.Name)).ToArray();
@@ -45,9 +45,13 @@ public partial class Crawer104Context
             if (!properties.Any())
                 continue;
 
-            item.Entity.更新時間 = DateTime.UtcNow;
+            item.Entity.UpdatedDate = DateTime.UtcNow;
 
-            Log.Information(item.Property(nameof(職缺.Id)).CurrentValue?.ToString() + " " + string.Join(Environment.NewLine, item.Properties.Where(x => x.IsModified).Select(x => x.Metadata.Name + " : " + x.OriginalValue + " -> " + x.CurrentValue)));
+
+            var changedInfo = item.Property(nameof(JobDescription.Id)).CurrentValue?.ToString() + " " + string.Join(Environment.NewLine, item.Properties.Where(x => x.IsModified).Select(x => x.Metadata.Name + " : " + x.OriginalValue + " -> " + x.CurrentValue));
+            changedInfo += Environment.NewLine;
+
+            Log.Information(changedInfo);
         }
     }
 }

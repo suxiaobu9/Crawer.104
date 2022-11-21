@@ -46,8 +46,8 @@ var db = services.GetRequiredService<Crawer104Context>();
 var compNoHash = new HashSet<string>();
 var jobNoHash = new HashSet<string>();
 
-var compDic = new Dictionary<string, 公司>();
-var jobDic = new Dictionary<string, 職缺>();
+var compDic = new Dictionary<string, Company>();
+var jobDic = new Dictionary<string, JobDescription>();
 
 var searchKey = new string[] { "C%23", ".net" };
 var jobExps = new string[] { "1", "3", "5", "10" };
@@ -126,11 +126,11 @@ foreach (var jobTask in jobTasks)
             compDetailUrl = !string.IsNullOrWhiteSpace(compDetailUrl) && compDetailUrl.Contains('?') ?
                             compDetailUrl[..compDetailUrl.IndexOf("?")] : "";
 
-            compDic.Add(job.custNo, new 公司
+            compDic.Add(job.custNo, new Company
             {
-                公司名稱 = job.custName,
-                公司網址 = compDetailUrl,
-                公司編號 = job.custNo,
+                CompanyName = job.custName,
+                CompanyUrl = compDetailUrl,
+                CompanyNo = job.custNo,
             });
         }
 
@@ -146,21 +146,21 @@ foreach (var jobTask in jobTasks)
 
         var transDateSuccess = DateTime.TryParseExact(job.appearDate, "yyyyMMdd", null, System.Globalization.DateTimeStyles.None, out var 出現日期);
 
-        jobDic.Add(job.jobNo, new 職缺
+        jobDic.Add(job.jobNo, new JobDescription
         {
-            出現日期 = transDateSuccess ? 出現日期 : null,
-            工作名稱 = job.jobName,
-            工作地點 = (job.jobAddrNoDesc ?? "") + job.jobAddress ?? "",
-            工作編號 = job.jobNo,
-            年資 = job.periodDesc,
-            建立時間 = now,
-            最低薪 = job.salaryLow?.TrimStart('0'),
-            最高薪 = job.salaryHigh?.TrimStart('0'),
-            薪水說明 = job.salaryDesc,
-            標記 = job.tags == null ? null : JsonSerializer.Serialize(job.tags, options: options),
-            詳細內容網址 = detailLink,
-            被刪除 = false,
-            已讀 = false
+            AppearDate = transDateSuccess ? 出現日期 : null,
+            JobName = job.jobName,
+            JobPlace = (job.jobAddrNoDesc ?? "") + job.jobAddress ?? "",
+            JobNo = job.jobNo,
+            Seniority = job.periodDesc,
+            CreatedDate = now,
+            MinimunSalary = job.salaryLow?.TrimStart('0'),
+            HighestSalary = job.salaryHigh?.TrimStart('0'),
+            SalaryDescription = job.salaryDesc,
+            Tags = job.tags == null ? null : JsonSerializer.Serialize(job.tags, options: options),
+            DetailUrl = detailLink,
+            IsDeleted = false,
+            HaveRead = false
         });
     }
 }
@@ -170,19 +170,19 @@ Log.Information($"Comp Count : {compDic.Count}");
 // 處理公司資料進資料庫
 foreach (var comp in compDic)
 {
-    var dbCompData = await db.公司s.FirstOrDefaultAsync(x => x.公司編號 == comp.Key);
+    var dbCompData = await db.Companies.FirstOrDefaultAsync(x => x.CompanyNo == comp.Key);
 
-    Log.Information($"{comp.Value.公司名稱}");
+    Log.Information($"{comp.Value.CompanyName}");
 
     if (dbCompData == null)
     {
-        await db.公司s.AddAsync(comp.Value);
+        await db.Companies.AddAsync(comp.Value);
         continue;
     }
 
-    dbCompData.公司名稱 = comp.Value.公司名稱;
-    dbCompData.公司網址 = comp.Value.公司網址;
-    dbCompData.公司編號 = comp.Value.公司編號;
+    dbCompData.CompanyName = comp.Value.CompanyName;
+    dbCompData.CompanyUrl = comp.Value.CompanyUrl;
+    dbCompData.CompanyNo = comp.Value.CompanyNo;
     comp.Value.Id = dbCompData.Id;
 }
 
@@ -193,12 +193,12 @@ var jobCounter = 1;
 // 取得所有職缺詳細資料，並且進資料庫
 foreach (var job in jobDic)
 {
-    if (string.IsNullOrWhiteSpace(job.Value.詳細內容網址))
+    if (string.IsNullOrWhiteSpace(job.Value.DetailUrl))
         continue;
 
-    var startIdx = (job.Value.詳細內容網址.IndexOf("tw/job") + "tw/job".Length) + 1;
+    var startIdx = (job.Value.DetailUrl.IndexOf("tw/job") + "tw/job".Length) + 1;
 
-    var jobDetailCode = job.Value.詳細內容網址[startIdx..];
+    var jobDetailCode = job.Value.DetailUrl[startIdx..];
 
     var jobDetail = await httpClient.GetFromJsonAsync<JobDetail>($"/job/ajax/content/{jobDetailCode}");
 
@@ -209,55 +209,55 @@ foreach (var job in jobDic)
 
     var compData = compDic.FirstOrDefault(x => x.Key == jobDetail.data.custNo).Value;
 
-    job.Value.公司id = compData.Id;
+    job.Value.CompanyId = compData.Id;
 
-    job.Value.上班時間 = jobDetail.data.jobDetail.workPeriod;
-    job.Value.工作內容 = jobDetail.data.jobDetail.jobDescription;
-    job.Value.要求 = jobDetail.data.condition?.other;
-    job.Value.遠端工作 = jobDetail.data.jobDetail.remoteWork != null;
+    job.Value.WorkingHour = jobDetail.data.jobDetail.workPeriod;
+    job.Value.WorkContent = jobDetail.data.jobDetail.jobDescription;
+    job.Value.Request = jobDetail.data.condition?.other;
+    job.Value.RemoteWork = jobDetail.data.jobDetail.remoteWork != null;
 
-    var dbCompData = await db.公司s.FirstOrDefaultAsync(x => x.Id == compData.Id);
+    var dbCompData = await db.Companies.FirstOrDefaultAsync(x => x.Id == compData.Id);
 
     if (dbCompData == null)
         continue;
 
-    dbCompData.福利 = jobDetail.data.welfare?.welfare;
+    dbCompData.Welfare = jobDetail.data.welfare?.welfare;
 
-    var dbJobData = await db.職缺s.FirstOrDefaultAsync(x => x.工作編號 == job.Key);
+    var dbJobData = await db.JobDescriptions.FirstOrDefaultAsync(x => x.JobNo == job.Key);
 
-    Log.Information($"[{jobDic.Count} - {jobCounter++}] {dbCompData.公司名稱} - {job.Value.工作名稱}");
+    Log.Information($"[{jobDic.Count} - {jobCounter++}] {dbCompData.CompanyName} - {job.Value.JobName}");
 
     if (dbJobData == null)
     {
-        await db.職缺s.AddAsync(job.Value);
+        await db.JobDescriptions.AddAsync(job.Value);
         continue;
     }
 
-    dbJobData.出現日期 = job.Value.出現日期;
-    dbJobData.工作名稱 = job.Value.工作名稱;
-    dbJobData.工作地點 = job.Value.工作地點;
-    dbJobData.工作編號 = job.Value.工作編號;
-    dbJobData.年資 = job.Value.年資;
-    dbJobData.最低薪 = job.Value.最低薪;
-    dbJobData.最高薪 = job.Value.最高薪;
-    dbJobData.薪水說明 = job.Value.薪水說明;
-    dbJobData.標記 = job.Value.標記;
-    dbJobData.詳細內容網址 = job.Value.詳細內容網址;
-    dbJobData.被刪除 = job.Value.被刪除;
-    dbJobData.已讀 = job.Value.已讀;
+    dbJobData.AppearDate = job.Value.AppearDate;
+    dbJobData.JobName = job.Value.JobName;
+    dbJobData.JobPlace = job.Value.JobPlace;
+    dbJobData.JobNo = job.Value.JobNo;
+    dbJobData.Seniority = job.Value.Seniority;
+    dbJobData.MinimunSalary = job.Value.MinimunSalary;
+    dbJobData.HighestSalary = job.Value.HighestSalary;
+    dbJobData.SalaryDescription = job.Value.SalaryDescription;
+    dbJobData.Tags = job.Value.Tags;
+    dbJobData.DetailUrl = job.Value.DetailUrl;
+    dbJobData.IsDeleted = job.Value.IsDeleted;
+    dbJobData.HaveRead = job.Value.HaveRead;
 
 }
 
 await db.SaveChangesAsync();
 
-var allDbJobs = await db.職缺s.ToArrayAsync();
+var allDbJobs = await db.JobDescriptions.ToArrayAsync();
 foreach (var job in allDbJobs)
 {
-    if (string.IsNullOrWhiteSpace(job.工作編號) ||
-        jobNoHash.Contains(job.工作編號))
+    if (string.IsNullOrWhiteSpace(job.JobNo) ||
+        jobNoHash.Contains(job.JobNo))
         continue;
 
-    job.被刪除 = true;
+    job.IsDeleted = true;
 }
 
 await db.SaveChangesAsync();

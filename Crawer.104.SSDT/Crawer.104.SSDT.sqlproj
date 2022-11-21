@@ -60,10 +60,10 @@
     <Folder Include="dbo\Tables\" />
   </ItemGroup>
   <ItemGroup>
-    <Build Include="dbo\Tables\職缺.sql" />
-    <Build Include="dbo\Tables\公司.sql" />
+    <None Include="update SSDT.scmp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="update SSDT.scmp" />
+    <Build Include="dbo\Tables\JobDescription.sql" />
+    <Build Include="dbo\Tables\Company.sql" />
   </ItemGroup>
 </Project>
