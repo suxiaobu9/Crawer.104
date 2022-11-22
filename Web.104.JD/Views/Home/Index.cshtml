@@ -9,6 +9,10 @@
     @foreach (var item in Model)
     {
         var remoteClass = item.JobDescriptions.Any(x => x.RemoteWork != null && x.RemoteWork.Value) ? "bg-warning":"";
+        var allRead = item.JobDescriptions.All(x => x.HaveRead != null && x.HaveRead.Value);
+
+        if (allRead)
+            continue;
 
         <div class="col-6 mt-2">
             <div class="row">

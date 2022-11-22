@@ -31,16 +31,7 @@
         </nav>
     </header>
     <div class="container">
-        <div class="row">
-            <div class="col-12 mb-2">
-                <a asp-action="Index" asp-controller="Home" class="btn btn-info" asp-route-onlyRemote="false">
-                    Normal
-                </a>
-                <a asp-action="Index" asp-controller="Home" class="btn btn-info" asp-route-onlyRemote="true">
-                    Remote
-                </a>
-            </div>
-        </div>
+     
         <main role="main" class="pb-3">
             @RenderBody()
         </main>

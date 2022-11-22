@@ -213,7 +213,11 @@ foreach (var job in jobDic)
     job.Value.WorkingHour = jobDetail.data.jobDetail.workPeriod;
     job.Value.WorkContent = jobDetail.data.jobDetail.jobDescription;
     job.Value.Request = jobDetail.data.condition?.other;
-    job.Value.RemoteWork = jobDetail.data.jobDetail.remoteWork != null;
+    job.Value.RemoteWork = jobDetail.data.jobDetail.remoteWork != null ||
+        (jobDetail.data.jobDetail.jobDescription?.Contains("遠端") ?? false) ||
+        (jobDetail.data.welfare?.welfare?.Contains("wfh") ?? false) ||
+        (jobDetail.data.welfare?.welfare?.Contains("遠端") ?? false) ||
+        (jobDetail.data.welfare?.welfare?.Contains("在家") ?? false);
 
     var dbCompData = await db.Companies.FirstOrDefaultAsync(x => x.Id == compData.Id);
 

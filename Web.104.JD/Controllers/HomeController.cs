@@ -19,14 +19,15 @@ public class HomeController : Controller
 
     }
 
-    public async Task<IActionResult> Index(bool? onlyRemote)
+    public async Task<IActionResult> Index()
     {
         var companies = await db.Companies
             .AsNoTracking()
-            .Include(x => x.JobDescriptions.Where(x=>x.IsDeleted ==null || !x.IsDeleted.Value))
-            .Where(x => x.Ignore == null || !x.Ignore.Value)
-            .Where(x => x.JobDescriptions.Any(y => y.IsDeleted == null || !y.IsDeleted.Value))
-            .OrderByDescending(x => x.JobDescriptions.Any(y => y.IsDeleted != null && !y.IsDeleted.Value && y.RemoteWork != null && y.RemoteWork.Value && y.HaveRead != null && !y.HaveRead.Value))
+            .Include(x => x.JobDescriptions)
+            .Where(x => x.JobDescriptions.Any(y => y.IsDeleted == null || y.IsDeleted.Value == false) &&
+                        (x.Ignore == null || x.Ignore.Value == false))
+            .OrderByDescending(x => x.JobDescriptions.Any(y => y.RemoteWork != null && y.RemoteWork.Value))
+            .ThenByDescending(x => x.JobDescriptions.Any(y => y.HaveRead == null || y.HaveRead.Value == false))
             .ThenBy(x => x.Id)
             .ToArrayAsync();
 
@@ -37,7 +38,9 @@ public class HomeController : Controller
     {
         var company = await db.Companies
             .AsNoTracking()
-            .Include(x => x.JobDescriptions.Where(y => y.IsDeleted == null || !y.IsDeleted.Value).OrderBy(y => y.HaveRead == null || !y.HaveRead.Value).ThenByDescending(y => y.RemoteWork != null && y.RemoteWork.Value))
+            .Include(x => x.JobDescriptions.Where(y => y.IsDeleted == null || !y.IsDeleted.Value)
+                            .OrderByDescending(y => y.HaveRead == null || !y.HaveRead.Value)
+                            .ThenByDescending(y => y.RemoteWork != null && y.RemoteWork.Value))
             .FirstOrDefaultAsync(x => x.Id == compId);
 
         return View(company);
